@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1511253320 source:/mnt/000E9C480005048D/大学学习/编译原理/实验/1/lexical analysis/main.cpp
+	<iostream>
+
+1511263150 source:/mnt/000E9C480005048D/大学学习/编译原理/实验/1/lexical analysis/src/LexicalItem.cpp
+	"LexicalItem.h"
+
+1511263045 /mnt/000E9C480005048D/大学学习/编译原理/实验/1/lexical analysis/include/LexicalItem.h
+	<string>
+
