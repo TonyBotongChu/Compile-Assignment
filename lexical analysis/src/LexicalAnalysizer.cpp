@@ -127,7 +127,7 @@ bool LexicalAnalysizer::isSingleBoundary(char c)
 {
     // 如果为单分界符，返回true；否则返回false
     char singleBoundary[] = {
-        '+', '-', '*', '/', '(', ')', ',', ';', '=', '[', ']', '{', '}'
+        '+', '-', '*', '/', '(', ')', ',', ';', '=', '[', ']', '{', '}', '>', '<'
     };
     for (int i = 0; i < sizeof(singleBoundary)/sizeof(char); i++)
     {
