@@ -23,9 +23,9 @@ std::string LexicalItem::wordTypeToString()
     case 4:
         return "delimiter";
     case 5:
-        return "operator";
+        return "single operator";
     case 6:
-        return "binaryoperator";
+        return "binary operator";
     default:
         return "error";
     }

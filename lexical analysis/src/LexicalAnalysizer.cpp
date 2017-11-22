@@ -5,7 +5,7 @@ LexicalAnalysizer::LexicalAnalysizer()
     //ctor
 }
 
-void LexicalAnalysizer::lineAnalyse(std::string s, std::vector<LexicalItem> &v)
+void LexicalAnalysizer::lineAnalyse(std::string s)
 {
     v.clear();
     for(int i = 0; i < s.length(); i++)
@@ -23,38 +23,66 @@ void LexicalAnalysizer::lineAnalyse(std::string s, std::vector<LexicalItem> &v)
             {
                 tempString += s[++i];
             }
+            LexicalItem word;
+            word.setWordName(tempString);
+            word.setValue(tempString);
             if(isReservedWord(tempString))
-                cout << "(keyword," << tempString << ")" << endl;
+            {
+                word.setWordType(KEYWORD);
+            }
             else
-                cout << "(letters," << tempString << ")" << endl;
+            {
+                word.setWordType(INDENTIFIER);
+            }
+            v.push_back(word);
             continue;
         }
         if(isNum(s[i]))
         {
-            string tempString = "";
+            std::string tempString = "";
             tempString += s[i];
+            LexicalItem word;
             while(i < s.length()-1 && isNum(s[i+1]))
             {
                 tempString += s[++i];
             }
-            cout << "(number," << tempString << ")" << endl;
+            word.setWordName(tempString);
+            word.setValue(tempString);
+            word.setWordType(CONSTANT);
+            v.push_back(word);
             continue;
         }
         if(isSingleBoundary(s[i]))
         {
-            cout << "(singleBoundary," << s[i] << ")" << endl;
+            addSingleBoundary(s[i]);
             continue;
         }
-        if(s[i] == ':')
+        if(isHeadofBinaryOperator(s[i]))
         {
-            if(i < s.length()-1 && s[i+1] == '=')
+            LexicalItem word;
+            if(s[i] == '<' && i < s.length()-1 && (s[i+1] == '=' || s[i+1] == '>'))
             {
-                cout << "(assign,)" << endl;
-                i++;
+                std::string tempString = "";
+                tempString += s[i];
+                tempString += s[++i];
+                word.setWordName(tempString);
+                word.setValue(tempString);
+                word.setWordType(BINARY_OPERATOR);
+                v.push_back(word);
+            }
+            else if(s[i] == '>' && i < s.length()-1 && (s[i+1] == '='))
+            {
+                std::string tempString = "";
+                tempString += s[i];
+                tempString += s[++i];
+                word.setWordName(tempString);
+                word.setValue(tempString);
+                word.setWordType(BINARY_OPERATOR);
+                v.push_back(word);
             }
             else
             {
-                cout << "(singleBoundary," << s[i] << ")" << endl;
+                addSingleBoundary(s[i]);
             }
             continue;
         }
@@ -62,10 +90,10 @@ void LexicalAnalysizer::lineAnalyse(std::string s, std::vector<LexicalItem> &v)
         {
             if(i >= s.length()-1 || s[i+1] != '/')
             {
-                cout << "(singleBoundary," << s[i] << ")" << endl;
+                addSingleBoundary(s[i]);
                 continue;
             }
-            if(s[i+1] == '/')
+            if(i < s.length()-1 && s[i+1] == '/')
             {
                 i = s.length()-1;
                 continue;
@@ -73,7 +101,7 @@ void LexicalAnalysizer::lineAnalyse(std::string s, std::vector<LexicalItem> &v)
         }
         else
         {
-            cout << "error" << endl;
+            addError();
             break;
         }
     }
@@ -126,8 +154,9 @@ bool LexicalAnalysizer::isNum(char c)
 bool LexicalAnalysizer::isSingleBoundary(char c)
 {
     // 如果为单分界符，返回true；否则返回false
-    char singleBoundary[] = {
-        '+', '-', '*', '/', '(', ')', ',', ';', '=', '[', ']', '{', '}', '>', '<'
+    char singleBoundary[] =
+    {
+        '+', '-', '*', '/', '(', ')', ',', ';', '=', '[', ']', '{', '}'
     };
     for (int i = 0; i < sizeof(singleBoundary)/sizeof(char); i++)
     {
@@ -137,4 +166,53 @@ bool LexicalAnalysizer::isSingleBoundary(char c)
         }
     }
     return false;
+}
+
+bool LexicalAnalysizer::isHeadofBinaryOperator(char c)
+{
+    char headofBinaryOperator[] =
+    {
+        '<', '>'
+    };
+    for (int i = 0; i < sizeof(headofBinaryOperator)/sizeof(char); i++)
+    {
+        if(c == headofBinaryOperator[i])
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+//bool LexicalAnalysizer::isSecondofBinaryOperator(char c)
+//{
+//    char secondofBinaryOperator[] = {
+//        '<', '>'
+//    }
+//    for (int i = 0; i < sizeof(secondofBinaryOperator)/sizeof(char); i++)
+//    {
+//        if(c == secondofBinaryOperator[i])
+//        {
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+
+void LexicalAnalysizer::addSingleBoundary(char c)
+{
+    LexicalItem word;
+    word.setWordName(std::string(1, c));
+    word.setValue(std::string(1, c));
+    word.setWordType(SINGLE_OPERATOR);
+    v.push_back(word);
+}
+
+void LexicalAnalysizer::addError()
+{
+    LexicalItem word;
+    word.setWordName("Invalid Input");
+    word.setValue("Error");
+    word.setWordType(ERROR_WORD);
+    v.push_back(word);
 }

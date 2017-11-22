@@ -3,6 +3,14 @@
 
 #include <string>
 
+#define KEYWORD 1
+#define INDENTIFIER 2
+#define CONSTANT 3
+#define DELIMITER 4
+#define SINGLE_OPERATOR 5
+#define BINARY_OPERATOR 6
+#define ERROR_WORD -1
+
 class LexicalItem
 {
     public:
