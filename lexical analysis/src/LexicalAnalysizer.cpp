@@ -39,13 +39,30 @@ void LexicalAnalysizer::lineAnalyse(std::string s)
         }
         if(isNum(s[i]))
         {
+            bool isDouble = false;
+            bool isDoubleError = false;
             std::string tempString = "";
             tempString += s[i];
             LexicalItem word;
-            while(i < s.length()-1 && isNum(s[i+1]))
+            while(i < s.length()-1 && (isNum(s[i+1]) || s[i+1] == '.'))
             {
+                if(s[i+1] == '.')
+                {
+                    if(isDouble)
+                    {
+                        addError();
+                        isDoubleError = true;
+                        break;
+                    }
+                    else
+                    {
+                        isDouble = true;
+                    }
+                }
                 tempString += s[++i];
             }
+            if(isDoubleError)
+                break;
             word.setWordName(tempString);
             word.setValue(tempString);
             word.setWordType(CONSTANT);
