@@ -64,7 +64,18 @@ void LexicalAnalysizer::lineAnalyse(std::string s)
             if(isDoubleError)
                 break;
             word.setWordName(tempString);
-            word.setValue(tempString);
+            //char* strarr[70];
+            if(isDouble)
+            {
+                word.setValue(tempString);
+            }
+            else
+            {
+                int val;
+                val = std::stoi(tempString);
+                word.setValue(IntToString(val));
+            }
+            //word.setValue(tempString);
             word.setWordType(CONSTANT);
             v.push_back(word);
             continue;
@@ -87,7 +98,7 @@ void LexicalAnalysizer::lineAnalyse(std::string s)
                 word.setWordType(BINARY_OPERATOR);
                 v.push_back(word);
             }
-            else if(s[i] == '>' && i < s.length()-1 && (s[i+1] == '='))
+            else if((s[i] == '>' || s[i] == ':') && i < s.length()-1 && (s[i+1] == '='))
             {
                 std::string tempString = "";
                 tempString += s[i];
@@ -175,7 +186,7 @@ bool LexicalAnalysizer::isSingleBoundary(char c)
     {
         '+', '-', '*', '/', '(', ')', ',', ';', '=', '[', ']', '{', '}'
     };
-    for (int i = 0; i < sizeof(singleBoundary)/sizeof(char); i++)
+    for (int i = 0; i < (int)(sizeof(singleBoundary)/sizeof(char)); i++)
     {
         if(c == singleBoundary[i])
         {
@@ -189,9 +200,9 @@ bool LexicalAnalysizer::isHeadofBinaryOperator(char c)
 {
     char headofBinaryOperator[] =
     {
-        '<', '>'
+        '<', '>', ':'
     };
-    for (int i = 0; i < sizeof(headofBinaryOperator)/sizeof(char); i++)
+    for (int i = 0; i < (int)(sizeof(headofBinaryOperator)/sizeof(char)); i++)
     {
         if(c == headofBinaryOperator[i])
         {
@@ -205,7 +216,7 @@ bool LexicalAnalysizer::isHeadofBinaryOperator(char c)
 //{
 //    char secondofBinaryOperator[] = {
 //        '<', '>'
-//    }
+//    };
 //    for (int i = 0; i < sizeof(secondofBinaryOperator)/sizeof(char); i++)
 //    {
 //        if(c == secondofBinaryOperator[i])
@@ -232,4 +243,17 @@ void LexicalAnalysizer::addError()
     word.setValue("Error");
     word.setWordType(ERROR_WORD);
     v.push_back(word);
+}
+
+std::string LexicalAnalysizer::IntToString(int num)
+{
+    std::string s = "";
+    char c;
+    while(num != 0)
+    {
+        c = num%2 + '0';
+        num /= 2;
+        s = c+s;
+    }
+    return s;
 }
