@@ -11,7 +11,7 @@ void LexicalAnalysizer::lineAnalyse(std::string s)
     for(int i = 0; i < s.length(); i++)
     {
         // 抛弃空格和换行符
-        if(s[i] == ' ' || s[i] == '\n')
+        if(s[i] == ' ' || s[i] == '\n' || s[i] == '\t' || s[i] == 13)
         {
             continue;
         }
@@ -72,12 +72,17 @@ void LexicalAnalysizer::lineAnalyse(std::string s)
             else
             {
                 int val;
-                val = std::stoi(tempString);
+                val = StringToint(tempString);
                 word.setValue(IntToString(val));
             }
             //word.setValue(tempString);
             word.setWordType(CONSTANT);
             v.push_back(word);
+            continue;
+        }
+        if(isDelimiter(s[i]))
+        {
+            addDelimiter(s[i]);
             continue;
         }
         if(isSingleBoundary(s[i]))
@@ -129,7 +134,7 @@ void LexicalAnalysizer::lineAnalyse(std::string s)
         }
         else
         {
-            addError();
+            addError(s[i]);
             break;
         }
     }
@@ -179,12 +184,28 @@ bool LexicalAnalysizer::isNum(char c)
         return false;
 }
 
+bool LexicalAnalysizer::isDelimiter(char c)
+{
+    char delimiter[] =
+    {
+        '(', ')', ',', ';', '.', '[', ']', '{', '}'
+    };
+    for (int i = 0; i < (int)(sizeof(delimiter)/sizeof(char)); i++)
+    {
+        if(c == delimiter[i])
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool LexicalAnalysizer::isSingleBoundary(char c)
 {
     // 如果为单分界符，返回true；否则返回false
     char singleBoundary[] =
     {
-        '+', '-', '*', '/', '(', ')', ',', ';', '=', '[', ']', '{', '}'
+        '+', '-', '*', '/', '='
     };
     for (int i = 0; i < (int)(sizeof(singleBoundary)/sizeof(char)); i++)
     {
@@ -227,6 +248,15 @@ bool LexicalAnalysizer::isHeadofBinaryOperator(char c)
 //    return false;
 //}
 
+void LexicalAnalysizer::addDelimiter(char c)
+{
+    LexicalItem word;
+    word.setWordName(std::string(1, c));
+    word.setValue(std::string(1, c));
+    word.setWordType(DELIMITER);
+    v.push_back(word);
+}
+
 void LexicalAnalysizer::addSingleBoundary(char c)
 {
     LexicalItem word;
@@ -245,8 +275,30 @@ void LexicalAnalysizer::addError()
     v.push_back(word);
 }
 
+void LexicalAnalysizer::addError(char c)
+{
+    LexicalItem word;
+    word.setWordName("Invalid Input");
+    word.setValue(IntToString((int)c));
+    word.setWordType(ERROR_WORD);
+    v.push_back(word);
+}
+
+int LexicalAnalysizer::StringToint(std::string s)
+{
+    int num = 0;
+    for(int i = s.length()-1; i >= 0; i--)
+    {
+        num *= 10;
+        num += (int)s[i] - (int)'0';
+    }
+    return num;
+}
+
 std::string LexicalAnalysizer::IntToString(int num)
 {
+    if(num == 0)
+        return "0";
     std::string s = "";
     char c;
     while(num != 0)

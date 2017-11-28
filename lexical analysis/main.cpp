@@ -34,6 +34,11 @@ void file_test(string path)
         cout << left << setw(20) << "Type";
         cout << left << setw(10) << "Value";
         cout << endl;
+        for(int i = 0; i < 50; i++)
+        {
+            cout << "-";
+        }
+        cout << endl;
         while(getline(input, s))
         {
             analysizer.lineAnalyse(s);
@@ -58,6 +63,6 @@ int main()
 {
     //debug_test();
     //file_test("/home/zbt/Documents/lexicalanalysis.input");
-    file_test("lexicalanalysis.input");
+    file_test("test.txt");
     return 0;
 }

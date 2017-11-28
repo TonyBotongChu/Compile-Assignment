@@ -12,11 +12,14 @@ public:
     bool isReservedWord(std::string s);
     bool isLetter(char c);
     bool isNum(char c);
+    bool isDelimiter(char c);
     bool isSingleBoundary(char c);
     bool isHeadofBinaryOperator(char c);
 
+    void addDelimiter(char c);
     void addSingleBoundary(char c);
     void addError();
+    void addError(char c);
 //        bool isSecondofBinaryOperator(char c);
 
     std::vector<LexicalItem> v;
@@ -33,6 +36,7 @@ public:
         pStr[32] = '\0';
     }
 
+    int StringToint(std::string s);
     std::string IntToString(int num);
     //std::string IntToString(std::string num);
     std::string DoubleToString(double num);
