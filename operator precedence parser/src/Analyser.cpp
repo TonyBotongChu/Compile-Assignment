@@ -23,7 +23,7 @@ void Analyser::initPriorityMatrix()
       * > > > < > <
       ( - < < < = <
       ) > > > > > -
-      i > > < - > -
+      i > > > - > -
     */
     setPriorityMaztrix('#', '#', '-');
     setPriorityMaztrix('#', '+', '<');
@@ -62,7 +62,7 @@ void Analyser::initPriorityMatrix()
 
     setPriorityMaztrix('i', '#', '>');
     setPriorityMaztrix('i', '+', '>');
-    setPriorityMaztrix('i', '*', '<');
+    setPriorityMaztrix('i', '*', '>');
     setPriorityMaztrix('i', '(', '-');
     setPriorityMaztrix('i', ')', '>');
     setPriorityMaztrix('i', 'i', '-');
