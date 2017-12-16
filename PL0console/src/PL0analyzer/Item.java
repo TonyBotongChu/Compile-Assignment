@@ -8,17 +8,27 @@ public class Item
 		wordName = s;
 	}
 
+	public void setWordName(char c)
+	{
+		wordName = String.valueOf(c);
+	}
+
 	public String getWordName()
 	{
 		return wordName;
 	}
 
-	void setWordType(short i)
+	public enum Type
 	{
-		wordType = i;
+		KEYWORD, INDENTIFIER, CONSTANT, DELIMITER, SINGLE_OPERATOR, BINARY_OPERATOR, ERROR_WORD
 	}
 
-	public short getWordType()
+	public void setWordType(Type type)
+	{
+		wordType = type;
+	}
+
+	public Type getWordType()
 	{
 		return wordType;
 	}
@@ -27,26 +37,31 @@ public class Item
 	{
 		switch (wordType)
 		{
-		case 1:
+		case KEYWORD:
 			return "keyword";
-		case 2:
+		case INDENTIFIER:
 			return "identifier";
-		case 3:
+		case CONSTANT:
 			return "constant";
-		case 4:
+		case DELIMITER:
 			return "delimiter";
-		case 5:
+		case SINGLE_OPERATOR:
 			return "single operator";
-		case 6:
+		case BINARY_OPERATOR:
 			return "binary operator";
 		default:
 			return "error";
 		}
 	}
 
-	public void setValue(String s)
+	public void setWordValue(String s)
 	{
 		wordValue = s;
+	}
+
+	public void setWordValue(char c)
+	{
+		wordValue = String.valueOf(c);
 	}
 
 	public String getValue()
@@ -55,6 +70,6 @@ public class Item
 	}
 
 	private String wordName;
-	private short wordType;
+	private Type wordType;
 	private String wordValue;
 } 
