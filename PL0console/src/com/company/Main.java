@@ -10,9 +10,9 @@ public class Main {
     {
         Scanner sc = new Scanner(System.in);
         String s = sc.nextLine();
-        Analyzer analyzer = new Analyzer();
-        analyzer.lineAnalyse(s);
-        for(Item item : analyzer.v)
+        LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer();
+        lexicalAnalyzer.lineAnalyse(s);
+        for(Item item : lexicalAnalyzer.v)
         {
             System.out.print("Name: "+item.getWordName());
             System.out.print("  Value: "+item.getValue());

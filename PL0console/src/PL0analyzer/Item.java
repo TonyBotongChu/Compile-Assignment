@@ -20,7 +20,7 @@ public class Item
 
 	public enum Type
 	{
-		KEYWORD, INDENTIFIER, CONSTANT, DELIMITER, SINGLE_OPERATOR, BINARY_OPERATOR, ERROR_WORD
+		KEYWORD, IDENTIFIER, CONSTANT, DELIMITER, SINGLE_OPERATOR, BINARY_OPERATOR, ERROR_WORD
 	}
 
 	public void setWordType(Type type)
@@ -33,13 +33,18 @@ public class Item
 		return wordType;
 	}
 
+	public boolean isTypeEqual(Type type)
+	{
+		return wordType == type;
+	}
+
 	public String wordTypeToString()
 	{
 		switch (wordType)
 		{
 		case KEYWORD:
 			return "keyword";
-		case INDENTIFIER:
+		case IDENTIFIER:
 			return "identifier";
 		case CONSTANT:
 			return "constant";
@@ -69,7 +74,7 @@ public class Item
 		return wordValue;
 	}
 
-	private String wordName;
+	private String wordName = "unknown";
 	private Type wordType;
-	private String wordValue;
+	private String wordValue = "unknown";
 } 

@@ -2,13 +2,14 @@ package PL0analyzer;
 
 import java.util.*;
 
-public class Analyzer
+public class LexicalAnalyzer
 {
 	public Vector<Item> v = new Vector<Item>();
 
+	// 词法分析程序-主程序
+	// 每执行一次，分析源代码的一行
 	public void lineAnalyse(String s)
 	{
-		// 词法分析程序-主程序
 		v.clear();
 		for(int i = 0; i < s.length(); i++)
 		{
@@ -17,6 +18,7 @@ public class Analyzer
 			{
 				continue;
 			}
+			// 如果是以字母开头，有可能是保留字，有可能是变量名
 			if(Character.isLetter(s.charAt(i)))
 			{
 				String tempString = "";
@@ -34,11 +36,12 @@ public class Analyzer
 				}
 				else
 				{
-					word.setWordType(Item.Type.INDENTIFIER);
+					word.setWordType(Item.Type.IDENTIFIER);
 				}
 				v.add(word);
 				continue;
 			}
+			// 如果以数字开头，那么是整数或者浮点数
 			if(Character.isDigit(s.charAt(i)))
 			{
 				boolean isDouble = false;
@@ -52,7 +55,7 @@ public class Analyzer
 					{
 						if(isDouble)
 						{
-							addError();
+							addError("two dots in float");
 							isDoubleError = true;
 							break;
 						}
@@ -63,6 +66,7 @@ public class Analyzer
 					}
 					tempString += s.charAt(++i);
 				}
+				// 如果出现了两个及以上的小数点，则报错
 				if(isDoubleError)
 					break;
 				word.setWordName(tempString);
@@ -80,6 +84,7 @@ public class Analyzer
 				v.add(word);
 				continue;
 			}
+			// 对于确定是分隔符的字符，简单处理即可
 			if(isDelimiter(s.charAt(i)))
 			{
 				addDelimiter(s.charAt(i));
@@ -90,6 +95,7 @@ public class Analyzer
 				addSingleBoundary(s.charAt(i));
 				continue;
 			}
+			// 仅凭第一个字符无法判断是单目运算符还是双目运算符时，再多读入一个字符
 			if(isHeadofBinaryOperator(s.charAt(i)))
 			{
 				Item word = new Item();
@@ -119,6 +125,7 @@ public class Analyzer
 				}
 				continue;
 			}
+			// 如果是斜杠，那么需要判断是除号还是注释
 			if(s.charAt(i) == '/')
 			{
 				if(i >= s.length()-1 || s.charAt(i+1) != '/')
@@ -134,7 +141,7 @@ public class Analyzer
 			}
 			else
 			{
-				addError(s.charAt(i));
+				addError("unknown character", s.charAt(i));
 				break;
 			}
 		}
@@ -142,9 +149,9 @@ public class Analyzer
 		return;
 	}
 
+	// 判断这个词是否为保留字
 	private boolean isReservedWord(String s)
 	{
-		// 判断这个词是否为保留字
 		if (s.equals("const"))
 			return true;
 		if (s.equals("var"))
@@ -170,9 +177,9 @@ public class Analyzer
 		return false;
 	}
 
+	// 判断一个字符是否为分隔符
 	private boolean isDelimiter(char c)
 	{
-		// 判断一个字符是否为分隔符
 		char delimiter[] = { '(', ')', ',', ';', '.', '[', ']', '{', '}' };
 		for (char aDelimiter : delimiter)
 		{
@@ -184,9 +191,9 @@ public class Analyzer
 		return false;
 	}
 
+	// 如果为单分界符，返回true；否则返回false
 	private boolean isSingleBoundary(char c)
 	{
-		// 如果为单分界符，返回true；否则返回false
 		char singleBoundary[] = { '+', '-', '*', '/', '=' };
 		for (char aSingleBoundary : singleBoundary)
 		{
@@ -198,9 +205,9 @@ public class Analyzer
 		return false;
 	}
 
+	// 判断一个字符是否为双目运算符的第一个字符
 	private boolean isHeadofBinaryOperator(char c)
 	{
-		// 判断一个字符是否为双目运算符的第一个字符
 		char headofBinaryOperator[] = { '<', '>', ':' };
 		for (char aHeadofBinaryOperator : headofBinaryOperator)
 		{
@@ -230,19 +237,21 @@ public class Analyzer
 		v.add(item);
 	}
 
-	private void addError()
+	private void addError(String s) throws LexicalException
 	{
 		Item item = new Item();
-		item.setWordName("Invalid Input");
+		item.setWordName(s);
 		item.setWordValue("Error");
 		item.setWordType(Item.Type.ERROR_WORD);
+		throw new LexicalException(s);
 	}
 
-	private void addError(char c)
+	private void addError(String s, char c)
 	{
 		Item item = new Item();
-		item.setWordName("Invalid Input");
+		item.setWordName(s);
 		item.setWordValue(c);
 		item.setWordType(Item.Type.ERROR_WORD);
+		throw new LexicalException(s);
 	}
 }
