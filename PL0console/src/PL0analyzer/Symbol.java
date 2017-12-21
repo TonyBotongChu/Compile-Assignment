@@ -10,7 +10,7 @@ public class Symbol
 	}
 
 	private SymbolType type;           //表示常量、变量或过程
-	private int value;          //表示常量或变量的值
+	private double value;          //表示常量或变量的值
 	private int level;          //嵌套层次
 	private int address;      //相对于所在嵌套过程基地址的地址
 	private int size;         //表示常量，变量，过程所占的大小，此变量和具体硬件有关，实际上在本编译器中为了方便，统一设为4了,设置过程在SymTable中的三个add函数中
@@ -21,7 +21,7 @@ public class Symbol
 		return type;
 	}
 
-	public int getValue()
+	public double getValue()
 	{
 		return value;
 	}
@@ -63,7 +63,9 @@ public class Symbol
 		type = t;
 	}
 
-	public void setValue(int v)
+	public void setValue(int v) { value = v; }
+
+	public void setValue(double v)
 	{
 		value = v;
 	}

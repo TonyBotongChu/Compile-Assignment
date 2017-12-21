@@ -20,7 +20,7 @@ public class SymbolTable
      * value：值
      * address：相对于所在层次基地址的地址
      */
-	public void addCONST(String name, int level, int value, int address)
+	public void addCONST(String name, int level, double value, int address)
 	{
 		Symbol symbol = new Symbol();
 		symbol.setName(name);
@@ -48,6 +48,28 @@ public class SymbolTable
 		symbol.setSize(0);
 		table.add(symbol);
 	}
+
+/*
+	public void setVAR(String name, double value)
+	{
+		int level;
+		for (int i = table.size()-1; i >= 0; i--)
+		{
+			Symbol symbol = table.get(i);
+			// 只关注同level或更靠前level的变量
+			if (i == table.size()-1 || level > symbol.getLevel()))
+				level = symbol.getLevel();
+			if (level >= symbol.getLevel())
+			{
+				if (symbol.getType() == Symbol.SymbolType.VAR && symbol.getName() == name)
+				{
+					symbol.setValue(value);
+					table.set(i, symbol);
+				}
+			}
+		}
+	}
+	*/
 
 	/*
 	 * 登录过程进符号表，参数同上
