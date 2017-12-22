@@ -1,10 +1,13 @@
 package com.company;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 import PL0analyzer.*;
 
 public class Main {
+
+	public static ArrayList<String> stringArrayList = new ArrayList<>();
 
     private static void debug_test()
     {
@@ -20,7 +23,7 @@ public class Main {
         }
     }
 
-    private void file_test(String s)
+    private static void file_test(String s)
     {
         try
         {
@@ -34,13 +37,16 @@ public class Main {
 
             while ((str = br.readLine()) != null)
             {
-                sb.append(str + "/n");
-
-                System.out.println(str);
+                //sb.append(str + "/n");
+                test_line(str);
             }
 
             br.close();
             reader.close();
+
+            GrammarAnalyzer grammarAnalyzer = new GrammarAnalyzer();
+            grammarAnalyzer.ProgramAnalyze(stringArrayList);
+            grammarAnalyzer.table.toStringArrayList();
         }
         catch(FileNotFoundException e) {
             e.printStackTrace();
@@ -50,9 +56,23 @@ public class Main {
         }
     }
 
+    private static void test_line(String str)
+    {
+        //System.out.println(str);
+		//GrammarAnalyzer grammarAnalyzer = new GrammarAnalyzer();
+		stringArrayList.add(str);
+    }
+
     public static void main(String[] args) {
-	// write your code here
-        System.out.println("hello world");
-        debug_test();
+        //debug_test();
+        String filename;
+        filename = "/home/zbt/Documents/Compile Assignment/test/0.txt";
+        /*
+        System.out.println(">Please input filename:");
+        System.out.print(">>");
+        Scanner s=new Scanner(System.in);
+        filename=s.next();
+        */
+        file_test(filename);
     }
 }

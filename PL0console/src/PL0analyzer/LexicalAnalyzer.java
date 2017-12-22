@@ -10,7 +10,7 @@ public class LexicalAnalyzer
 	// 每执行一次，分析源代码的一行
 	public void lineAnalyse(String s)
 	{
-		v.clear();
+		//v.clear();
 		for(int i = 0; i < s.length(); i++)
 		{
 			// 抛弃空格和换行符

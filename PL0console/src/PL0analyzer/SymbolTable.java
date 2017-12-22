@@ -12,6 +12,11 @@ public class SymbolTable
 {
 	public Vector<Symbol> table = new Vector<>();
 
+	private void error(String s) throws GrammarException
+	{
+		throw new GrammarException(s);
+	}
+
 	/*
 	 *登录常量进符号表
      * 参数：
@@ -22,6 +27,10 @@ public class SymbolTable
      */
 	public void addCONST(String name, int level, double value, int address)
 	{
+		if(existIDENTIFIER_thislevel(name, level))
+		{
+			error("identifier already exists");
+		}
 		Symbol symbol = new Symbol();
 		symbol.setName(name);
 		symbol.setLevel(level);
@@ -30,6 +39,8 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.CONST);
 		symbol.setSize(4);
 		table.add(symbol);
+		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		System.out.println(str);
 	}
 
 	/*
@@ -40,6 +51,10 @@ public class SymbolTable
      */
 	public void addVAR(String name, int level, int address)
 	{
+		if(existIDENTIFIER_thislevel(name, level))
+		{
+			error("identifier already exists");
+		}
 		Symbol symbol = new Symbol();
 		symbol.setName(name);
 		symbol.setLevel(level);
@@ -47,6 +62,8 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.VAR);
 		symbol.setSize(0);
 		table.add(symbol);
+		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		System.out.println(str);
 	}
 
 /*
@@ -76,6 +93,10 @@ public class SymbolTable
 	 */
 	public void addPROCEDURE(String name, int level, int address)
 	{
+		if(existIDENTIFIER_thislevel(name, level))
+		{
+			error("identifier already exists");
+		}
 		Symbol symbol = new Symbol();
 		symbol.setName(name);
 		symbol.setLevel(level);
@@ -83,5 +104,33 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.PROCEDURE);
 		symbol.setSize(0);
 		table.add(symbol);
+		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		System.out.println(str);
+	}
+
+	public boolean existIDENTIFIER_thislevel(String name, int level)
+	{
+		for (int i = table.size() - 1; i >= 0; i--)
+		{
+			Symbol symbol = table.get(i);
+			if(symbol.getLevel() != level)
+				break;
+			if(symbol.getName() == name)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public ArrayList<String> toStringArrayList()
+	{
+		ArrayList<String> stringArrayList = new ArrayList<>();
+		for(Symbol symbol : table)
+		{
+			String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+			stringArrayList.add(str);
+		}
+		return stringArrayList;
 	}
 }
