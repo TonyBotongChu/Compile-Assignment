@@ -7,7 +7,7 @@ public class GrammarAnalyzer
 {
 	public LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer();
 	public SymbolTable table = new SymbolTable();
-	public PcodeList pcodeList = new PcodeList();
+	public Vector<Pcode> codelist = new Vector<>();
 
 	private int num = 0;
 	private int level = 0;
@@ -22,7 +22,7 @@ public class GrammarAnalyzer
 		System.out.println("Program analyze");
 		SubProgram();
 		do_dot();
-		if (num < lexicalAnalyzer.v.size()-1)
+		if (num < lexicalAnalyzer.v.size() - 1)
 		{
 			error("illegal input");
 		}
@@ -61,6 +61,11 @@ public class GrammarAnalyzer
 						ProgramSentense();
 						return;
 					}
+				}
+				else
+				{
+					ProgramSentense();
+					return;
 				}
 			}
 			break;
@@ -160,7 +165,7 @@ public class GrammarAnalyzer
 						ProgramCondition();
 						do_then();
 						ProgramSentense();
-						return;
+						status = 7;
 					}
 					else if (item.getValue().equals("while"))
 					{
@@ -182,6 +187,14 @@ public class GrammarAnalyzer
 						do_leftparenthese();
 						status = 5;
 					}
+					else if(item.getValue().equals("repeat"))
+					{
+						do_repeat();
+						ProgramSentense();
+						status = 8;
+					}
+					else
+						return;
 				}
 				else
 					return;
@@ -206,7 +219,13 @@ public class GrammarAnalyzer
 			break;
 			case 3:
 			{
-				find_ident();
+				Item item = lexicalAnalyzer.v.get(num);
+				if (item.isTypeEqual(Item.Type.CONSTANT))
+					do_number();
+				else if (item.isTypeEqual(Item.Type.IDENTIFIER))
+					find_ident();
+				else
+					error("should be number or identifier");
 				status = 4;
 			}
 			break;
@@ -227,8 +246,14 @@ public class GrammarAnalyzer
 			break;
 			case 5:
 			{
-				find_ident();
-				status = 4;
+				Item item = lexicalAnalyzer.v.get(num);
+				if (item.isTypeEqual(Item.Type.CONSTANT))
+					do_number();
+				else if (item.isTypeEqual(Item.Type.IDENTIFIER))
+					find_ident();
+				else
+					error("should be number or identifier");
+				status = 6;
 			}
 			break;
 			case 6:
@@ -243,6 +268,33 @@ public class GrammarAnalyzer
 				{
 					do_comma();
 					status = 5;
+				}
+			}
+			break;
+			case 7:
+			{
+				Item item = lexicalAnalyzer.v.get(num);
+				if(item.getValue().equals("else"))
+				{
+					do_else();
+					ProgramSentense();
+				}
+				return;
+			}
+			break;
+			case 8:
+			{
+				Item item = lexicalAnalyzer.v.get(num);
+				if(item.getValue().equals("until"))
+				{
+					do_until();
+					ProgramCondition();
+				}
+				else if(item.getValue().equals(";"))
+				{
+					do_semicolon();
+					ProgramSentense();
+					status = 8;
 				}
 			}
 			break;
@@ -378,13 +430,13 @@ public class GrammarAnalyzer
 	// 检查要处理的字符是否符合语法规则
 	private void checksym(String s)
 	{
-		if(num >= lexicalAnalyzer.v.size())
+		if (num >= lexicalAnalyzer.v.size())
 		{
-			error("missing "+s);
+			error("missing " + s);
 		}
 		if (!lexicalAnalyzer.v.get(num).getValue().equals(s))
 		{
-			error("should be "+s);
+			error("should be " + s);
 		}
 	}
 
@@ -435,6 +487,12 @@ public class GrammarAnalyzer
 	private void do_then()
 	{
 		checksym("then");
+		readsym();
+	}
+
+	private void do_else()
+	{
+		checksym("else");
 		readsym();
 	}
 
@@ -489,8 +547,8 @@ public class GrammarAnalyzer
 			error("should be identifier");
 		}
 		name = item.getValue();
-		if(table.table.isEmpty())
-			error(name+" is undefined identifier");
+		if (table.table.isEmpty())
+			error(name + " is undefined identifier");
 		int level = table.table.lastElement().getLevel();
 		for (int i = table.table.size() - 1; i >= 0; i--)
 		{
@@ -504,7 +562,7 @@ public class GrammarAnalyzer
 				return true;
 			}
 		}
-		error(name+" is undefined identifier");
+		error(name + " is undefined identifier");
 		return false;
 	}
 
@@ -621,6 +679,18 @@ public class GrammarAnalyzer
 	private void do_divsign()
 	{
 		checksym("/");
+		readsym();
+	}
+
+	private void do_repeat()
+	{
+		checksym("repeat");
+		readsym();
+	}
+
+	private void do_until()
+	{
+		checksym("until");
 		readsym();
 	}
 }

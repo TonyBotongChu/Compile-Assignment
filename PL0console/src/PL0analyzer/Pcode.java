@@ -4,6 +4,33 @@ public class Pcode
 {
 	public enum PAction
 	{
+		/*
+		LDA(0),
+		LOD(1),
+		LDI(2),
+		DIS(3),
+		FCT(8),
+		INT(9),//将栈顶元素加上y
+		JMP(10),//无条件转移到y
+		JPC(11),
+		CAL(19),//调用用户过程或函数
+		RED(27),//读（y表示类型，1：整型，2：实型，3：字符型）
+		HLT(31),//停止
+		MUS(36),//求负
+		ORR(51),//逻辑或
+		ADD(52),//整型加
+		SUB(53),//整型减
+		ADR(54),//实型加
+		SUR(55),//实型减
+		AND(56),//逻辑与
+		MUL(57),//整型乘
+		DIV(58),//实型除
+		MUR(60),//实型乘
+		DIR(61),//实型除
+		RDL(62),//readln（读完一行）
+		WRL(63);//writeln（换行写）
+		*/
+
 		LIT,//0 , a 取常量a放入数据栈栈顶
 		OPR,//0 , a 执行运算，a表示执行某种运算
 		LOD,//L ，a 取变量（相对地址为a，层差为L）放到数据栈的栈顶
@@ -14,7 +41,21 @@ public class Pcode
 		JPC,//0 ，a 条件转移指令，转移到地址为a的指令
 		RED,//L ，a 读数据并存入变量（相对地址为a，层次差为L）
 		WRT //0 ，0 将栈顶内容输出
-	}
+
+		/*
+		private int f;
+
+		private PAction(int F)
+		{
+			f = F;
+		}
+
+		public int getF()
+		{
+			return f;
+		}
+		*/
+		}
 
 	public void setAction(PAction pAction)
 	{

@@ -39,7 +39,7 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.CONST);
 		symbol.setSize(4);
 		table.add(symbol);
-		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		String str = symbol.getLevel() + " " + symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
 		System.out.println(str);
 	}
 
@@ -62,31 +62,9 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.VAR);
 		symbol.setSize(0);
 		table.add(symbol);
-		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		String str = symbol.getLevel() + " " + symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
 		System.out.println(str);
 	}
-
-/*
-	public void setVAR(String name, double value)
-	{
-		int level;
-		for (int i = table.size()-1; i >= 0; i--)
-		{
-			Symbol symbol = table.get(i);
-			// 只关注同level或更靠前level的变量
-			if (i == table.size()-1 || level > symbol.getLevel()))
-				level = symbol.getLevel();
-			if (level >= symbol.getLevel())
-			{
-				if (symbol.getType() == Symbol.SymbolType.VAR && symbol.getName() == name)
-				{
-					symbol.setValue(value);
-					table.set(i, symbol);
-				}
-			}
-		}
-	}
-	*/
 
 	/*
 	 * 登录过程进符号表，参数同上
@@ -104,7 +82,7 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.PROCEDURE);
 		symbol.setSize(0);
 		table.add(symbol);
-		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		String str = symbol.getLevel() + " " + symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
 		System.out.println(str);
 	}
 
@@ -115,12 +93,52 @@ public class SymbolTable
 			Symbol symbol = table.get(i);
 			if(symbol.getLevel() != level)
 				break;
-			if(symbol.getName() == name)
+			if(symbol.getName().equals(name))
 			{
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public void setVAR(String name, double value)
+	{
+		int level = table.lastElement().getLevel();
+		for (int i = table.size()-1; i >= 0; i--)
+		{
+			Symbol symbol = table.get(i);
+			// 只关注同level或更靠前level的变量
+			if (level > symbol.getLevel())
+				level = symbol.getLevel();
+			if (level >= symbol.getLevel())
+			{
+				if (symbol.getType() == Symbol.SymbolType.VAR && symbol.getName().equals(name))
+				{
+					symbol.setValue(value);
+					table.set(i, symbol);
+				}
+			}
+		}
+	}
+
+	public double getVAR(String name)
+	{
+		int level = table.lastElement().getLevel();
+		for (int i = table.size()-1; i >= 0; i--)
+		{
+			Symbol symbol = table.get(i);
+			// 只关注同level或更靠前level的变量
+			if (level > symbol.getLevel())
+				level = symbol.getLevel();
+			if (level >= symbol.getLevel())
+			{
+				if (symbol.getType() == Symbol.SymbolType.VAR || symbol.getType() == Symbol.SymbolType.CONST)
+					if (symbol.getName().equals(name))
+						return symbol.getValue();
+			}
+		}
+		error("cannot find"+name);
+		return 0.0;
 	}
 
 	public ArrayList<String> toStringArrayList()
