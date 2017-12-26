@@ -67,12 +67,6 @@ public class Main {
         //debug_test();
         String filename;
         filename = "/home/zbt/Documents/Compile Assignment/test/0.txt";
-        /*
-        System.out.println(">Please input filename:");
-        System.out.print(">>");
-        Scanner s=new Scanner(System.in);
-        filename=s.next();
-        */
         file_test(filename);
     }
 }

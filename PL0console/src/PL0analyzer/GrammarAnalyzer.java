@@ -1,6 +1,7 @@
 package PL0analyzer;
 
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Vector;
 
 public class GrammarAnalyzer
@@ -11,15 +12,20 @@ public class GrammarAnalyzer
 
 	private int num = 0;
 	private int level = 0;
-	private int address = 0;
+	private Stack<Integer> address = new Stack<>();
 	private double val;
 	private String name = "this line";
+
+	public GrammarAnalyzer()
+	{
+		address.push(3);
+	}
 
 	public void ProgramAnalyze(ArrayList<String> stringArrayList)
 	{
 		for (String s : stringArrayList)
 			lexicalAnalyzer.lineAnalyse(s);
-		System.out.println("Program analyze");
+		//System.out.println("Program analyze");
 		SubProgram();
 		do_dot();
 		if (num < lexicalAnalyzer.v.size() - 1)
@@ -73,7 +79,7 @@ public class GrammarAnalyzer
 				do_ident();
 				do_equalsign();
 				do_number();
-				table.addCONST(name, level, val, address);
+				addCONST(name, val);
 				status = 2;
 				break;
 			case 2:
@@ -94,7 +100,7 @@ public class GrammarAnalyzer
 			case 3:
 			{
 				do_ident();
-				table.addVAR(name, level, address);
+				addVAR(name, level);
 				status = 4;
 			}
 			break;
@@ -116,7 +122,7 @@ public class GrammarAnalyzer
 			case 5:
 				do_ident();
 				do_semicolon();
-				table.addPROCEDURE(name, level, address);
+				addPROCEDURE(name);
 				SubProgram();
 				do_semicolon();
 				status = 0;
@@ -281,7 +287,6 @@ public class GrammarAnalyzer
 				}
 				return;
 			}
-			break;
 			case 8:
 			{
 				Item item = lexicalAnalyzer.v.get(num);
@@ -312,12 +317,14 @@ public class GrammarAnalyzer
 		{
 			do_odd();
 			ProgramExpression();
+			codelist.add(new Pcode(Pcode.PAction.OPR, 0, 6));
 		}
 		else
 		{
 			ProgramExpression();
-			do_relationOp();
+			int op_num = do_relationOp();
 			ProgramExpression();
+			codelist.add(new Pcode(Pcode.PAction.OPR, 0, op_num));
 		}
 	}
 
@@ -335,11 +342,18 @@ public class GrammarAnalyzer
 				if (item.getValue().equals("+"))
 				{
 					do_plussign();
+					codelist.add(new Pcode(Pcode.PAction.LIT, 0, 0));
+					ProgramItem();
+					codelist.add(new Pcode(Pcode.PAction.OPR, 0, 1));
 				}
 				else if (item.getValue().equals("-"))
 				{
 					do_subsign();
+					codelist.add(new Pcode(Pcode.PAction.LIT, 0, 0));
+					ProgramItem();
+					codelist.add(new Pcode(Pcode.PAction.OPR, 0, 2));
 				}
+				else
 				ProgramItem();
 				status = 1;
 			}
@@ -350,14 +364,17 @@ public class GrammarAnalyzer
 				if (item.getValue().equals("+"))
 				{
 					do_plussign();
+					ProgramItem();
+					codelist.add(new Pcode(Pcode.PAction.OPR, 0, 1));
 				}
 				else if (item.getValue().equals("-"))
 				{
 					do_subsign();
+					ProgramItem();
+					codelist.add(new Pcode(Pcode.PAction.OPR, 0, 2));
 				}
 				else
 					return;
-				ProgramItem();
 			}
 			break;
 			default:
@@ -384,14 +401,17 @@ public class GrammarAnalyzer
 				if (item.getValue().equals("*"))
 				{
 					do_multsign();
+					ProgramFactor();
+					codelist.add(new Pcode(Pcode.PAction.OPR, 0, 3));
 				}
 				else if (item.getValue().equals("/"))
 				{
 					do_divsign();
+					ProgramFactor();
+					codelist.add(new Pcode(Pcode.PAction.OPR, 0, 4));
 				}
 				else
 					return;
-				ProgramFactor();
 			}
 			}
 		}
@@ -401,13 +421,17 @@ public class GrammarAnalyzer
 	private void ProgramFactor()
 	{
 		Item item = lexicalAnalyzer.v.get(num);
+		// 向codelist添加变量（const和var）
 		if (item.isTypeEqual(Item.Type.IDENTIFIER))
 		{
-			find_ident();
+			Symbol symbol =  find_ident();
+			codelist.add(new Pcode(Pcode.PAction.LOD, level-symbol.getLevel(), symbol.getAddress()));
 		}
+		// 向codelist添加常量（数字）
 		else if (item.isTypeEqual(Item.Type.CONSTANT))
 		{
 			do_number();
+			codelist.add(new Pcode(Pcode.PAction.LIT, 0, Integer.valueOf(item.getValue())));
 		}
 		else
 		{
@@ -468,6 +492,7 @@ public class GrammarAnalyzer
 	{
 		checksym("begin");
 		level++;
+		address.push(3);
 		readsym();
 	}
 
@@ -475,6 +500,7 @@ public class GrammarAnalyzer
 	{
 		checksym("end");
 		level--;
+		address.pop();
 		readsym();
 	}
 
@@ -539,7 +565,7 @@ public class GrammarAnalyzer
 	}
 
 	// 已知的标识符
-	private boolean find_ident()
+	private Symbol find_ident()
 	{
 		Item item = lexicalAnalyzer.v.get(num);
 		if (!item.isTypeEqual(Item.Type.IDENTIFIER))
@@ -559,11 +585,11 @@ public class GrammarAnalyzer
 			if (level >= symbol.getLevel() && symbol.getName().equals(name))
 			{
 				readsym();
-				return true;
+				return symbol;
 			}
 		}
 		error(name + " is undefined identifier");
-		return false;
+		return null;
 	}
 
 	// 等号的处理
@@ -633,7 +659,7 @@ public class GrammarAnalyzer
 	}
 
 	// 关系运算符的处理
-	private void do_relationOp()
+	private int do_relationOp()
 	{
 		Item item = lexicalAnalyzer.v.get(num);
 		if (item.isTypeEqual(Item.Type.SINGLE_OPERATOR))
@@ -642,6 +668,12 @@ public class GrammarAnalyzer
 			{
 				readsym();
 			}
+			if (item.getValue().equals("="))
+				return 8;
+			if (item.getValue().equals("<"))
+				return 10;
+			if (item.getValue().equals(">"))
+				return 12;
 		}
 		else if (item.isTypeEqual(Item.Type.BINARY_OPERATOR))
 		{
@@ -649,9 +681,16 @@ public class GrammarAnalyzer
 			{
 				readsym();
 			}
+			if(item.getValue().equals("<>"))
+				return 9;
+			if(item.getValue().equals("<="))
+				return 11;
+			if(item.getValue().equals(">="))
+				return 13;
 		}
 		else
 			error("should be relation operator");
+		return -1;
 	}
 
 	// 加号的处理
@@ -692,5 +731,26 @@ public class GrammarAnalyzer
 	{
 		checksym("until");
 		readsym();
+	}
+
+	private void addCONST(String name, double value)
+	{
+		int addr = address.pop()+1;
+		table.addCONST(name, level, value, addr);
+		address.push(addr);
+	}
+
+	private void addVAR(String name, double value)
+	{
+		int addr = address.pop()+1;
+		table.addVAR(name, level, addr);
+		address.push(addr);
+	}
+
+	private void addPROCEDURE(String name)
+	{
+		int addr = address.pop()+1;
+		table.addPROCEDURE(name, level, addr);
+		address.push(addr);
 	}
 }

@@ -39,7 +39,8 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.CONST);
 		symbol.setSize(4);
 		table.add(symbol);
-		String str = symbol.getLevel() + " " + symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		str += " level: " + symbol.getLevel() + " addr: " + symbol.getAddress();
 		System.out.println(str);
 	}
 
@@ -62,7 +63,8 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.VAR);
 		symbol.setSize(0);
 		table.add(symbol);
-		String str = symbol.getLevel() + " " + symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		str += " level: " + symbol.getLevel() + " addr: " + symbol.getAddress();
 		System.out.println(str);
 	}
 
@@ -82,7 +84,8 @@ public class SymbolTable
 		symbol.setType(Symbol.SymbolType.PROCEDURE);
 		symbol.setSize(0);
 		table.add(symbol);
-		String str = symbol.getLevel() + " " + symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+		str += " level: " + symbol.getLevel() + " addr: " + symbol.getAddress();
 		System.out.println(str);
 	}
 
@@ -147,6 +150,7 @@ public class SymbolTable
 		for(Symbol symbol : table)
 		{
 			String str = symbol.getName() + " " + symbol.SymbolTypeString() + " " + symbol.getValue();
+			str += " level: " + symbol.getLevel() + " addr: " + symbol.getAddress();
 			stringArrayList.add(str);
 		}
 		return stringArrayList;

@@ -33,6 +33,7 @@ public class Pcode
 
 		LIT,//0 , a 取常量a放入数据栈栈顶
 		OPR,//0 , a 执行运算，a表示执行某种运算
+		// 1+, 2-, 3*, 4/, 6odd, 8=, 9<>, 10<, 11<=, 12>, 13>=
 		LOD,//L ，a 取变量（相对地址为a，层差为L）放到数据栈的栈顶
 		STO,//L ，a 将数据栈栈顶的内容存入变量（相对地址为a，层次差为L）
 		CAL,//L ，a 调用过程（转子指令）（入口地址为a，层次差为L）
@@ -55,6 +56,15 @@ public class Pcode
 			return f;
 		}
 		*/
+		}
+
+		public Pcode(){}
+		public Pcode(PAction pAction, int arg1, int arg2)
+		{
+			this();
+			this.setAction(pAction);
+			this.setArg1(arg1);
+			this.setArg2(arg2);
 		}
 
 	public void setAction(PAction pAction)
