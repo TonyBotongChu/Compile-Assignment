@@ -46,16 +46,14 @@ public class RootLayoutController
 		catch (LexicalException le)
 		{
 			String s = "Lexical error ";
-			s += le.getRetCd();
-			s += " : ";
+			s += " : \n";
 			s += le.getMsgDes();
 			compiletext.setText(s);
 		}
 		catch (GrammarException ge)
 		{
 			String s = "Grammar error ";
-			s += ge.getRetCd();
-			s += " : ";
+			s += " : \n";
 			s += ge.getMsgDes();
 			compiletext.setText(s);
 		}

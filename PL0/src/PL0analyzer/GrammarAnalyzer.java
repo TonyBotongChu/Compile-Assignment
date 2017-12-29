@@ -21,10 +21,12 @@ public class GrammarAnalyzer
 		address.push(3);
 	}
 
-	public void ProgramAnalyze(ArrayList<String> stringArrayList)
+	public void ProgramAnalyze(ArrayList<String> stringArrayList) throws RuntimeException
 	{
 		for (String s : stringArrayList)
+		{
 			lexicalAnalyzer.lineAnalyse(s);
+		}
 		//System.out.println("Program analyze");
 		SubProgram();
 		do_dot();
