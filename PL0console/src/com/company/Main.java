@@ -58,8 +58,6 @@ public class Main {
 
     private static void test_line(String str)
     {
-        //System.out.println(str);
-		//GrammarAnalyzer grammarAnalyzer = new GrammarAnalyzer();
 		stringArrayList.add(str);
     }
 

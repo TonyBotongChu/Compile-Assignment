@@ -137,6 +137,7 @@ public class GrammarAnalyzer
 	private void ProgramSentense()
 	{
 		int status = 0;
+		int addr1 = -1, addr2 = -1;
 		while (num < lexicalAnalyzer.v.size())
 		{
 			switch (status)
@@ -146,9 +147,10 @@ public class GrammarAnalyzer
 				Item item = lexicalAnalyzer.v.get(num);
 				if (item.isTypeEqual(Item.Type.IDENTIFIER))
 				{
-					find_ident();
+					Symbol symbol = find_ident();
 					do_assignmentsymbol();
 					ProgramExpression();
+					codelist.add(new Pcode(Pcode.PAction.STO, level - symbol.getLevel(), symbol.getAddress()));
 					return;
 				}
 				else if (item.isTypeEqual(Item.Type.KEYWORD))
@@ -156,7 +158,8 @@ public class GrammarAnalyzer
 					if (item.getValue().equals("call"))
 					{
 						do_call();
-						find_ident();
+						Symbol symbol = find_ident();
+						codelist.add(new Pcode(Pcode.PAction.CAL, level - symbol.getLevel(), symbol.getAddress()));
 						return;
 					}
 					else if (item.getValue().equals("begin"))
@@ -170,15 +173,37 @@ public class GrammarAnalyzer
 						do_if();
 						ProgramCondition();
 						do_then();
+						int addr = codelist.size();
+						Pcode jpc = new Pcode(Pcode.PAction.JPC, 0, 0);
+						codelist.add(jpc);
 						ProgramSentense();
-						status = 7;
+						jpc.setArg2(codelist.size());
+						codelist.set(addr, jpc);
+						if (lexicalAnalyzer.v.get(num).getValue().equals("else"))
+						{
+							addr = codelist.size();
+							Pcode jmp = new Pcode(Pcode.PAction.JMP, 0, 0);
+							codelist.add(jmp);
+							do_else();
+							ProgramSentense();
+							jmp.setArg2(codelist.size());
+							codelist.set(addr, jmp);
+						}
+						return;
 					}
 					else if (item.getValue().equals("while"))
 					{
+						addr1 = codelist.size();
 						do_while();
 						ProgramCondition();
+						addr2 = codelist.size();
+						Pcode jpc = new Pcode(Pcode.PAction.JPC, 0, 0);
+						codelist.add(jpc);
 						do_do();
 						ProgramSentense();
+						codelist.add(new Pcode(Pcode.PAction.JMP, 0, addr1));
+						jpc.setArg2(codelist.size());
+						codelist.set(addr2, jpc);
 						return;
 					}
 					else if (item.getValue().equals("read"))
@@ -193,9 +218,10 @@ public class GrammarAnalyzer
 						do_leftparenthese();
 						status = 5;
 					}
-					else if(item.getValue().equals("repeat"))
+					else if (item.getValue().equals("repeat"))
 					{
 						do_repeat();
+						addr1 = codelist.size();
 						ProgramSentense();
 						status = 8;
 					}
@@ -226,10 +252,11 @@ public class GrammarAnalyzer
 			case 3:
 			{
 				Item item = lexicalAnalyzer.v.get(num);
-				if (item.isTypeEqual(Item.Type.CONSTANT))
-					do_number();
-				else if (item.isTypeEqual(Item.Type.IDENTIFIER))
-					find_ident();
+				if (item.isTypeEqual(Item.Type.IDENTIFIER))
+				{
+					Symbol symbol = find_ident();
+					codelist.add(new Pcode(Pcode.PAction.RED, level-symbol.getLevel(), symbol.getAddress()));
+				}
 				else
 					error("should be number or identifier");
 				status = 4;
@@ -254,9 +281,17 @@ public class GrammarAnalyzer
 			{
 				Item item = lexicalAnalyzer.v.get(num);
 				if (item.isTypeEqual(Item.Type.CONSTANT))
-					do_number();
+				{
+					int val = do_number();
+					codelist.add(new Pcode(Pcode.PAction.LIT, 0, val));
+					codelist.add(new Pcode(Pcode.PAction.WRT, 0, 0));
+				}
 				else if (item.isTypeEqual(Item.Type.IDENTIFIER))
-					find_ident();
+				{
+					Symbol symbol = find_ident();
+					codelist.add(new Pcode(Pcode.PAction.LOD, level-symbol.getLevel(), symbol.getAddress()));
+					codelist.add(new Pcode(Pcode.PAction.WRT, 0, 0));
+				}
 				else
 					error("should be number or identifier");
 				status = 6;
@@ -277,25 +312,17 @@ public class GrammarAnalyzer
 				}
 			}
 			break;
-			case 7:
-			{
-				Item item = lexicalAnalyzer.v.get(num);
-				if(item.getValue().equals("else"))
-				{
-					do_else();
-					ProgramSentense();
-				}
-				return;
-			}
 			case 8:
 			{
 				Item item = lexicalAnalyzer.v.get(num);
-				if(item.getValue().equals("until"))
+				if (item.getValue().equals("until"))
 				{
 					do_until();
+					addr2 = codelist.size();
 					ProgramCondition();
+					codelist.add(new Pcode(Pcode.PAction.JPC, 0, addr1));
 				}
-				else if(item.getValue().equals(";"))
+				else if (item.getValue().equals(";"))
 				{
 					do_semicolon();
 					ProgramSentense();
@@ -354,7 +381,7 @@ public class GrammarAnalyzer
 					codelist.add(new Pcode(Pcode.PAction.OPR, 0, 2));
 				}
 				else
-				ProgramItem();
+					ProgramItem();
 				status = 1;
 			}
 			break;
@@ -424,8 +451,8 @@ public class GrammarAnalyzer
 		// 向codelist添加变量（const和var）
 		if (item.isTypeEqual(Item.Type.IDENTIFIER))
 		{
-			Symbol symbol =  find_ident();
-			codelist.add(new Pcode(Pcode.PAction.LOD, level-symbol.getLevel(), symbol.getAddress()));
+			Symbol symbol = find_ident();
+			codelist.add(new Pcode(Pcode.PAction.LOD, level - symbol.getLevel(), symbol.getAddress()));
 		}
 		// 向codelist添加常量（数字）
 		else if (item.isTypeEqual(Item.Type.CONSTANT))
@@ -605,15 +632,15 @@ public class GrammarAnalyzer
 	}
 
 	// 数字的处理
-	private void do_number()
+	private int do_number()
 	{
 		Item item = lexicalAnalyzer.v.get(num);
 		if (!item.isTypeEqual(Item.Type.CONSTANT))
 		{
 			error(name + " should be constant");
 		}
-		val = Integer.parseInt(item.getValue());
 		readsym();
+		return (int)Integer.parseInt(item.getValue());
 	}
 
 	// 点的处理
@@ -681,11 +708,11 @@ public class GrammarAnalyzer
 			{
 				readsym();
 			}
-			if(item.getValue().equals("<>"))
+			if (item.getValue().equals("<>"))
 				return 9;
-			if(item.getValue().equals("<="))
+			if (item.getValue().equals("<="))
 				return 11;
-			if(item.getValue().equals(">="))
+			if (item.getValue().equals(">="))
 				return 13;
 		}
 		else
@@ -735,21 +762,21 @@ public class GrammarAnalyzer
 
 	private void addCONST(String name, double value)
 	{
-		int addr = address.pop()+1;
+		int addr = address.pop() + 1;
 		table.addCONST(name, level, value, addr);
 		address.push(addr);
 	}
 
 	private void addVAR(String name, double value)
 	{
-		int addr = address.pop()+1;
+		int addr = address.pop() + 1;
 		table.addVAR(name, level, addr);
 		address.push(addr);
 	}
 
 	private void addPROCEDURE(String name)
 	{
-		int addr = address.pop()+1;
+		int addr = address.pop() + 1;
 		table.addPROCEDURE(name, level, addr);
 		address.push(addr);
 	}

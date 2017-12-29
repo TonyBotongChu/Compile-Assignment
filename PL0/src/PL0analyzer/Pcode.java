@@ -1,5 +1,8 @@
 package PL0analyzer;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Pcode
 {
 	public enum PAction
@@ -66,6 +69,10 @@ public class Pcode
 			this.setArg1(arg1);
 			this.setArg2(arg2);
 		}
+		public Pcode(Pcode pcode)
+		{
+			this(pcode.getAction(), pcode.getArg1(), pcode.getArg2());
+		}
 
 	public void setAction(PAction pAction)
 	{
@@ -95,6 +102,21 @@ public class Pcode
 	public int getArg2()
 	{
 		return arg2;
+	}
+
+	public StringProperty getActionStringProperty()
+	{
+		return new SimpleStringProperty(action.name());
+	}
+
+	public StringProperty getArg1StringProperty()
+	{
+		return new SimpleStringProperty(String.valueOf(arg1));
+	}
+
+	public StringProperty getArg2StringProperty()
+	{
+		return new SimpleStringProperty(String.valueOf(arg2));
 	}
 
 	// P-Code由一个指令和两个参数组成

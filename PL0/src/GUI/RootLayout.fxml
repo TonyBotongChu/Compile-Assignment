@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.RootLayoutController">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#OpenResourceFile" text="Open Source File" />
+            <MenuItem mnemonicParsing="false" onAction="#handleExit" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+      <BorderPane prefHeight="371.0" prefWidth="640.0">
+         <center>
+            <TableView fx:id="tableView" prefHeight="371.0" prefWidth="401.0" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn fx:id="instruction" prefWidth="200.0" text="Pcode Instruction" />
+                <TableColumn fx:id="parg1" prefWidth="100.0" text="Arg1" />
+                  <TableColumn fx:id="parg2" prefWidth="100.0" text="Arg2" />
+              </columns>
+            </TableView>
+         </center>
+         <right>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Text fx:id="compiletext" strokeType="OUTSIDE" strokeWidth="0.0" text="Compile Message" AnchorPane.topAnchor="20.0" />
+               </children></AnchorPane>
+         </right>
+      </BorderPane>
+  </children>
+</VBox>
