@@ -8,6 +8,7 @@ public class Pcode
 	public enum PAction
 	{
 		/*
+		* Pascal-S的指令，已废弃
 		LDA(0),
 		LOD(1),
 		LDI(2),
@@ -45,20 +46,6 @@ public class Pcode
 		JPC,//0 ，a 条件转移指令，转移到地址为a的指令
 		RED,//L ，a 读数据并存入变量（相对地址为a，层次差为L）
 		WRT //0 ，0 将栈顶内容输出
-
-		/*
-		private int f;
-
-		private PAction(int F)
-		{
-			f = F;
-		}
-
-		public int getF()
-		{
-			return f;
-		}
-		*/
 		}
 
 		public Pcode(){}
@@ -104,6 +91,7 @@ public class Pcode
 		return arg2;
 	}
 
+	// StringProperty的作用是当对应的值改变时，图形界面能及时做出反应
 	public StringProperty getActionStringProperty()
 	{
 		return new SimpleStringProperty(action.name());

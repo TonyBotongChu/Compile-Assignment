@@ -281,6 +281,7 @@ public class GrammarAnalyzer
 			break;
 			case 5:
 			{
+				/*
 				Item item = lexicalAnalyzer.v.get(num);
 				if (item.isTypeEqual(Item.Type.CONSTANT))
 				{
@@ -296,6 +297,8 @@ public class GrammarAnalyzer
 				}
 				else
 					error("should be number or identifier");
+					*/
+				ProgramExpression();
 				status = 6;
 			}
 			break;
