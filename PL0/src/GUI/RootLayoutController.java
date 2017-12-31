@@ -4,22 +4,16 @@ import PL0analyzer.GrammarException;
 import PL0analyzer.LexicalException;
 import PL0analyzer.Pcode;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.*;
-
-import java.io.*;
-
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+
+/*
+* 图形界面的事件处理
+* */
 
 public class RootLayoutController
 {

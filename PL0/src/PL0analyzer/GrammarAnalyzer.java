@@ -299,6 +299,7 @@ public class GrammarAnalyzer
 					error("should be number or identifier");
 					*/
 				ProgramExpression();
+				codelist.add(new Pcode(Pcode.PAction.WRT, 0, 0));
 				status = 6;
 			}
 			break;

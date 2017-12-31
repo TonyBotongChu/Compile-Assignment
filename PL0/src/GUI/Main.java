@@ -42,6 +42,7 @@ public class Main extends Application {
 		}
 	}
 
+	// 实现MainApplication与Controller的联动
     public Stage getPrimaryStage()
     {
         return primaryStage;
@@ -59,9 +60,10 @@ public class Main extends Application {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open Source File");
 		File file = fileChooser.showOpenDialog(primaryStage);
+		// 避免用户打开选择文件窗口又取消造成的程序崩溃
 		if(file == null)
 		{
-			System.out.println("file cancelled");
+			//System.out.println("file cancelled");
 			return;
 		}
 		mainConsole.openfile(file);

@@ -4,6 +4,10 @@ import java.io.*;
 import java.util.ArrayList;
 import PL0analyzer.*;
 
+/*
+* Console版的原Main类，移植过来后删除了Main函数
+* */
+
 public class MainConsole
 {
 	public static ArrayList<String> stringArrayList = new ArrayList<>();
