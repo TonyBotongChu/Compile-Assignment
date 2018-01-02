@@ -97,6 +97,10 @@ public class GrammarAnalyzer
 					do_semicolon();
 					status = 0;
 				}
+				else
+				{
+					error("should be , or ;");
+				}
 			}
 			break;
 			case 3:
@@ -119,6 +123,10 @@ public class GrammarAnalyzer
 					do_semicolon();
 					status = 0;
 				}
+				else
+				{
+					error("should be , or ;");
+				}
 			}
 			break;
 			case 5:
@@ -129,10 +137,14 @@ public class GrammarAnalyzer
 				do_semicolon();
 				status = 0;
 				break;
+			case 10:
+				return;
 			default:
 				error("unknown error");
 			}
 		}
+		if(status != 10)
+			error("incomplete source code");
 	}
 
 	// 语句的分析
@@ -249,6 +261,10 @@ public class GrammarAnalyzer
 					ProgramSentense();
 					status = 1;
 				}
+				else
+				{
+					error("should be end or ;");
+				}
 			}
 			break;
 			case 3:
@@ -336,6 +352,8 @@ public class GrammarAnalyzer
 				}
 			}
 			break;
+			case 10:
+				return;
 			default:
 				return;
 			}

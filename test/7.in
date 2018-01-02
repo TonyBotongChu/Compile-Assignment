@@ -1,17 +1,18 @@
-var a;
+const z = 0;
+var head,foot,cock,rabbit;
 begin
-a:=6;
-repeat
-write(a);
-if a>=4 then begin
-write(11);
-end
-else if a>=2 then begin
-write(22);
-end
-else begin
-write(33);
-end;
-a:=a-1
-until a<0;
+ n:=z;
+ read(head,foot);
+ cock:=1;
+ while cock<=head do
+  begin
+   rabbit:=head-cock;
+   if cock*2+rabbit*4 = foot then
+    begin
+     write(cock,rabbit);
+     n:=n+1;
+    end;
+   cock:=cock+1;
+  end;
+ if n=0 then write(0,0)
 end.
